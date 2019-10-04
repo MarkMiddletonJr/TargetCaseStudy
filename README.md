@@ -7,7 +7,7 @@ The goal of this case study was to review the given code and produce the appropr
 - JQuery 2.1.4
 
 ## Setup
-1. Web.config
+1. Web.config (inside Products) and App.config (inside ProductsTest)
    - Connection Strings need redirected to the local repository path
 2. In the event you receive the error "Cannot attach file" you must reset the local db used for this project
    - Start by deleting all 3 files in the SqlExpress
@@ -17,6 +17,9 @@ The goal of this case study was to review the given code and produce the appropr
      sqllocaldb.exe delete v11.0
      Update-Database
      ```
+## Running Tests
+1. Open the Test Explorer via Test Menu
+2. Click the double green arrows to "Run All Tests"
 
 ## Productionize Application
 - Security for "edit" and "delete" functions
