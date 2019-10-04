@@ -14,66 +14,94 @@ namespace Products.Controllers.Tests
     [TestClass()]
     public class ProductsControllerTests
     {
-        [TestMethod()]
-        public void Edit_Name()
+        /// <summary>
+        /// Returns a Product object with the edit made to the desired property. If property or value are passed as empty or null the methd will return "First Or Default".
+        /// </summary>
+        /// <param name="property">The property you want to change. Name, Price, or Location</param>
+        /// <param name="value">The new value you of the property you want to set</param>
+        /// <returns>A Product object</returns>
+        public Product GetItem(string property, object value)
         {
-            using (ProductsController productsController = new ProductsController())
             using (ProductsContext productsContext = new ProductsContext())
             {
-                var itemToEdit = productsContext.Products.FirstOrDefault();
-                if (itemToEdit != null)
+                if (!string.IsNullOrWhiteSpace(property) && value != null)
                 {
-                    itemToEdit.Name = "Old Item";
-                    var result = productsController.Edit(itemToEdit);
+                    //Property and value are not null/empty. Return an edited item.
+                    Product itemToEdit = productsContext.Products.FirstOrDefault();
 
-                    Assert.IsNotNull(result);
+                    if (itemToEdit != null)
+                    {
+                        itemToEdit.GetType().GetProperty(property).SetValue(itemToEdit, value, null);
+                    }
+                    return itemToEdit;
                 }
-                else
-                {
-                    Assert.Fail();
-                }
+
+                //if property or value are null/empty just return the first object, unedited.
+                return productsContext.Products.FirstOrDefault();
             }
         }
 
         [TestMethod()]
-        public void Edit_Price()
+        public void EditNameByObject()
         {
             using (ProductsController productsController = new ProductsController())
-            using (ProductsContext productsContext = new ProductsContext())
             {
-                var itemToEdit = productsContext.Products.FirstOrDefault();
-                if (itemToEdit != null)
-                {
-                    itemToEdit.Price += 1m;
-                    var result = productsController.Edit(itemToEdit);
-
-                    Assert.IsNotNull(result);
-                }
-                else
-                {
-                    Assert.Fail();
-                }
+                Assert.IsNotNull(productsController.Edit(GetItem("Name", "Item Name Changed")));
             }
         }
 
         [TestMethod()]
-        public void Edit_Location()
+        public void EditPriceByObject()
         {
             using (ProductsController productsController = new ProductsController())
-            using (ProductsContext productsContext = new ProductsContext())
             {
-                var itemToEdit = productsContext.Products.FirstOrDefault();
-                if (itemToEdit != null)
-                {
-                    itemToEdit.Location = "Games";
-                    var result = productsController.Edit(itemToEdit);
+                Assert.IsNotNull(productsController.Edit(GetItem("Price", 2.99m)));
+            }
+        }
 
-                    Assert.IsNotNull(result);
-                }
-                else
-                {
-                    Assert.Fail();
-                }
+        [TestMethod()]
+        public void EditLocationByObject()
+        {
+            using (ProductsController productsController = new ProductsController())
+            {
+                Assert.IsNotNull(productsController.Edit(GetItem("Location", "Games")));
+            }
+        }
+
+        [TestMethod()]
+        public void EditNameByID()
+        {
+            using (ProductsController productsController = new ProductsController())
+            {
+                Assert.IsNotNull(productsController.Edit(GetItem("Name", "Item Name Changed by ID").Id));
+            }
+        }
+
+        [TestMethod()]
+        public void EditPriceByID()
+        {
+            using (ProductsController productsController = new ProductsController())
+            {
+                Assert.IsNotNull(productsController.Edit(GetItem("Price", 3.99m).Id));
+            }
+        }
+
+        [TestMethod()]
+        public void EditLocationByID()
+        {
+            using (ProductsController productsController = new ProductsController())
+            {
+                Assert.IsNotNull(productsController.Edit(GetItem("Location", "Hardware").Id));
+            }
+        }
+
+        [TestMethod()]
+        public void EditByIDNullCheck()
+        {
+            using (ProductsController productsController = new ProductsController())
+            {
+                //The ID '0' is not a valid item and will produce a null record in the controller.
+                Assert.IsNotNull(productsController.Edit(0));
             }
         }
 
@@ -82,14 +110,11 @@ namespace Products.Controllers.Tests
         {
             using (ProductsController productsController = new ProductsController())
             {
-                string name = "New Product";
-                decimal price = 1.99m;
-                string location = "Home";
                 Product newProduct = new Product()
                 {
-                    Name = name,
-                    Price = price,
-                    Location = location
+                    Name = "New Product",
+                    Price = 1.99m,
+                    Location = "Home"
                 };
 
                 var result = productsController.Create(newProduct);
@@ -99,43 +124,51 @@ namespace Products.Controllers.Tests
         }
 
         [TestMethod()]
-        public void DeleteExisting()
+        public void Delete()
         {
             using (ProductsController productsController = new ProductsController())
-            using (ProductsContext productsContext = new ProductsContext())
             {
-                var itemToDelete = productsContext.Products.FirstOrDefault();
-                if (itemToDelete != null)
-                {
-                    var result = productsController.Delete(itemToDelete.Id);
-
-                    Assert.IsNotNull(result);
-                }
-                else
-                {
-                    Assert.Fail();
-                }
+                Assert.IsNotNull(productsController.Delete(GetItem("", "").Id));
             }
         }
 
         [TestMethod()]
-        public void DetailsExisiting()
+        public void DeleteNullCheck()
         {
             using (ProductsController productsController = new ProductsController())
-            using (ProductsContext productsContext = new ProductsContext())
             {
-                var itemToDelete = productsContext.Products.FirstOrDefault();
-                if (itemToDelete != null)
-                {
-                    var result = productsController.Details(itemToDelete.Id);
-
-                    Assert.IsNotNull(result);
-                }
-                else
-                {
-                    Assert.Fail();
-                }
+                //The ID '0' is not a valid item and will produce a null record in the controller.
+                Assert.IsNotNull(productsController.Delete(0));
             }
         }
+
+        [TestMethod()]
+        public void DeleteConfirmed()
+        {
+            using (ProductsController productsController = new ProductsController())
+            {
+                Assert.IsNotNull(productsController.Delete(GetItem("","").Id));
+            }
+        }
+
+        [TestMethod()]
+        public void Details()
+        {
+            using (ProductsController productsController = new ProductsController())
+            {
+                Assert.IsNotNull(productsController.Details(GetItem("", "").Id));
+            }
+        }
+
+        [TestMethod()]
+        public void DetailsNullCheck()
+        {
+            using (ProductsController productsController = new ProductsController())
+            {
+                //The ID '0' is not a valid item and will produce a null record in the controller.
+                Assert.IsNotNull(productsController.Details(0));
+            }
+        }
+
     }
 }
