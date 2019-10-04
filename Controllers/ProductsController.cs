@@ -30,7 +30,7 @@ namespace Products.Controllers
             Product product = db.Products.Find(id);
             if (product == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index","Error");
             }
             return View(product);
         }
@@ -68,7 +68,7 @@ namespace Products.Controllers
             Product product = db.Products.Find(id);
             if (product == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error");
             }
             return View(product);
         }
@@ -97,7 +97,7 @@ namespace Products.Controllers
             Product product = db.Products.Find(id);
             if (product == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index", "Error");
             }
             return View(product);
         }
