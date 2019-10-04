@@ -4,6 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Products.Entities;
+using Products.Models;
+using System.Web.Mvc;
+using System.Data;
 
 namespace Products.Controllers.Tests
 {
@@ -11,27 +15,127 @@ namespace Products.Controllers.Tests
     public class ProductsControllerTests
     {
         [TestMethod()]
-        public void EditTest()
+        public void Edit_Name()
         {
-            Assert.Fail();
+            using (ProductsController productsController = new ProductsController())
+            using (ProductsContext productsContext = new ProductsContext())
+            {
+                var itemToEdit = productsContext.Products.FirstOrDefault();
+                if (itemToEdit != null)
+                {
+                    itemToEdit.Name = "Old Item";
+                    var result = productsController.Edit(itemToEdit);
+
+                    Assert.IsNotNull(result);
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            }
         }
 
         [TestMethod()]
-        public void CreateTest()
+        public void Edit_Price()
         {
-            Assert.Fail();
+            using (ProductsController productsController = new ProductsController())
+            using (ProductsContext productsContext = new ProductsContext())
+            {
+                var itemToEdit = productsContext.Products.FirstOrDefault();
+                if (itemToEdit != null)
+                {
+                    itemToEdit.Price += 1m;
+                    var result = productsController.Edit(itemToEdit);
+
+                    Assert.IsNotNull(result);
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            }
         }
 
         [TestMethod()]
-        public void DeleteTest()
+        public void Edit_Location()
         {
-            Assert.Fail();
+            using (ProductsController productsController = new ProductsController())
+            using (ProductsContext productsContext = new ProductsContext())
+            {
+                var itemToEdit = productsContext.Products.FirstOrDefault();
+                if (itemToEdit != null)
+                {
+                    itemToEdit.Location = "Games";
+                    var result = productsController.Edit(itemToEdit);
+
+                    Assert.IsNotNull(result);
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            }
         }
 
         [TestMethod()]
-        public void DetailsTest()
+        public void CreateNew()
         {
-            Assert.Fail();
+            using (ProductsController productsController = new ProductsController())
+            {
+                string name = "New Product";
+                decimal price = 1.99m;
+                string location = "Home";
+                Product newProduct = new Product()
+                {
+                    Name = name,
+                    Price = price,
+                    Location = location
+                };
+
+                var result = productsController.Create(newProduct);
+
+                Assert.IsNotNull(result);
+            }
+        }
+
+        [TestMethod()]
+        public void DeleteExisting()
+        {
+            using (ProductsController productsController = new ProductsController())
+            using (ProductsContext productsContext = new ProductsContext())
+            {
+                var itemToDelete = productsContext.Products.FirstOrDefault();
+                if (itemToDelete != null)
+                {
+                    var result = productsController.Delete(itemToDelete.Id);
+
+                    Assert.IsNotNull(result);
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            }
+        }
+
+        [TestMethod()]
+        public void DetailsExisiting()
+        {
+            using (ProductsController productsController = new ProductsController())
+            using (ProductsContext productsContext = new ProductsContext())
+            {
+                var itemToDelete = productsContext.Products.FirstOrDefault();
+                if (itemToDelete != null)
+                {
+                    var result = productsController.Details(itemToDelete.Id);
+
+                    Assert.IsNotNull(result);
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            }
         }
     }
 }
